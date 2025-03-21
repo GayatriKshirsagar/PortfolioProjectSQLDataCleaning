@@ -66,50 +66,50 @@ FROM PortfolioProject.dbo.NashvilleHousing
 WHERE OwnerAddress IS NOT NULL
 
 ALTER TABLE NashvilleHousing
-Add OwnerSplitAddress Nvarchar(255);
+ADD OwnerSplitAddress Nvarchar(255);
 
-Update NashvilleHousing
+UPDATE NashvilleHousing
 SET OwnerSplitAddress = PARSENAME(REPLACE(OwnerAddress, ',', '.') , 3)
 
 ALTER TABLE NashvilleHousing
-Add OwnerSplitCity Nvarchar(255);
+ADD OwnerSplitCity Nvarchar(255);
 
 Update NashvilleHousing
 SET OwnerSplitCity = PARSENAME(REPLACE(OwnerAddress, ',', '.') , 2)
 
 ALTER TABLE NashvilleHousing
-Add OwnerSplitState Nvarchar(255);
+ADD OwnerSplitState Nvarchar(255);
 
 Update NashvilleHousing
 SET OwnerSplitState = PARSENAME(REPLACE(OwnerAddress, ',', '.') , 1)
 
-Select *
-From PortfolioProject.dbo.NashvilleHousing
+SELECT *
+FROM PortfolioProject.dbo.NashvilleHousing
 
 -- Change Y, N to YES, No in 'Sold As vacant' column
 
-Select Distinct(SoldAsVacant), Count(SoldAsVacant)
-From PortfolioProject.dbo.NashvilleHousing
-Group by SoldAsVacant
-order by 2
+SELECT DISTINCT(SoldAsVacant), COUNT(SoldAsVacant)
+FROM PortfolioProject.dbo.NashvilleHousing
+GROUP BY SoldAsVacant
+ORDER BY 2
 
-Select SoldAsVacant
-, CASE When SoldAsVacant = 'Y' THEN 'Yes'
-	   When SoldAsVacant = 'N' THEN 'No'
+SELECT SoldAsVacant
+, CASE WHEN SoldAsVacant = 'Y' THEN 'Yes'
+	   WHEN SoldAsVacant = 'N' THEN 'No'
 	   ELSE SoldAsVacant
 	   END
-From PortfolioProject.dbo.NashvilleHousing
+FROM PortfolioProject.dbo.NashvilleHousing
 
-Update NashvilleHousing
-SET SoldAsVacant = CASE When SoldAsVacant = 'Y' THEN 'Yes'
-	   When SoldAsVacant = 'N' THEN 'No'
+UPDATE NashvilleHousing
+SET SoldAsVacant = CASE WHEN SoldAsVacant = 'Y' THEN 'Yes'
+	   WHEN SoldAsVacant = 'N' THEN 'No'
 	   ELSE SoldAsVacant
 	   END
 
 -- Remove Duplicates
 
 WITH RowNumCTE AS(
-Select *,
+SELECT *,
 	ROW_NUMBER() OVER (
 	PARTITION BY ParcelID,
 				 PropertyAddress,
@@ -120,24 +120,24 @@ Select *,
 					UniqueID
 					) row_num
 
-From PortfolioProject.dbo.NashvilleHousing
+FROM PortfolioProject.dbo.NashvilleHousing
 )
-Select *
-From RowNumCTE
-Where row_num > 1
-Order by PropertyAddress
+SELECT *
+FROM RowNumCTE
+WHERE row_num > 1
+ORDER BY PropertyAddress
 
 DELETE 
-From RowNumCTE
-Where row_num > 1
+FROM RowNumCTE
+WHERE row_num > 1
 
-Select *
-From PortfolioProject.dbo.NashvilleHousing
+SELECT *
+FROM PortfolioProject.dbo.NashvilleHousing
 
 -- Delete Unused Columns
 
-Select *
-From PortfolioProject.dbo.NashvilleHousing
+SELECT *
+FROM PortfolioProject.dbo.NashvilleHousing
 
 ALTER TABLE PortfolioProject.dbo.NashvilleHousing
 DROP COLUMN OwnerAddress, TaxDistrict, PropertyAddress, SaleDate
